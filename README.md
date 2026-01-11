@@ -2,6 +2,9 @@
 
 A terminal UI viewer for [Claude Code](https://claude.ai/claude-code) TODOs - real-time task tracking in your terminal.
 
+<img width="1570" height="933" alt="スクリーンショット 2026-01-12 午前5 42 19" src="https://github.com/user-attachments/assets/16f8a52f-697d-4e02-8c66-359036a5593e" />
+
+
 ## Features
 
 - Real-time tracking of Claude Code TODO lists
