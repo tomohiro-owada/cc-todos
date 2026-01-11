@@ -1,4 +1,4 @@
-use crate::todo::{find_latest_todo_file, get_todos_dir, load_todos, Todo};
+use crate::todo::{find_session_for_cwd, find_todo_file_for_session, get_todos_dir, load_todos, find_latest_todo_file, Todo};
 use crate::ui;
 use crate::watcher::DirWatcher;
 use anyhow::Result;
@@ -15,25 +15,45 @@ use std::time::Duration;
 pub struct App {
     pub todos: Vec<Todo>,
     pub file_path: PathBuf,
+    pub session_id: Option<String>,
+    pub cwd: PathBuf,
     pub should_quit: bool,
 }
 
 impl App {
-    pub fn new() -> Result<Self> {
-        let file_path = find_latest_todo_file().unwrap_or_default();
+    pub fn new(cwd: PathBuf) -> Result<Self> {
+        // Try to find session for this working directory
+        let (session_id, file_path) = match find_session_for_cwd(&cwd) {
+            Ok(sid) => {
+                let fp = find_todo_file_for_session(&sid).unwrap_or_default();
+                (Some(sid), fp)
+            }
+            Err(_) => {
+                // Fallback to latest file
+                (None, find_latest_todo_file().unwrap_or_default())
+            }
+        };
+
         let todos = load_todos(&file_path).unwrap_or_default();
+
         Ok(App {
             todos,
             file_path,
+            session_id,
+            cwd,
             should_quit: false,
         })
     }
 
     pub fn reload_todos(&mut self) {
-        // Always get the latest file
-        if let Ok(latest) = find_latest_todo_file() {
-            self.file_path = latest;
+        // Try to find session for our working directory
+        if let Ok(sid) = find_session_for_cwd(&self.cwd) {
+            self.session_id = Some(sid.clone());
+            if let Ok(fp) = find_todo_file_for_session(&sid) {
+                self.file_path = fp;
+            }
         }
+
         if let Ok(todos) = load_todos(&self.file_path) {
             self.todos = todos;
         }

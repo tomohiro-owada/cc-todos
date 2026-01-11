@@ -2,15 +2,14 @@
 
 A terminal UI viewer for [Claude Code](https://claude.ai/claude-code) TODOs - real-time task tracking in your terminal.
 
-<img width="1570" height="933" alt="スクリーンショット 2026-01-12 午前5 42 19" src="https://github.com/user-attachments/assets/16f8a52f-697d-4e02-8c66-359036a5593e" />
-
+<img width="1570" alt="cc-todos screenshot" src="https://github.com/user-attachments/assets/16f8a52f-697d-4e02-8c66-359036a5593e" />
 
 ## Features
 
 - Real-time tracking of Claude Code TODO lists
 - Progress bar showing completion status
 - Categorized view: In Progress / Pending / Completed
-- Auto-detects the latest active session
+- **Project-aware**: Tracks TODOs for the specific working directory
 - tmux integration for side-by-side workflow
 
 ## Installation
@@ -34,25 +33,67 @@ cargo install --path .
 ### Basic usage
 
 ```bash
-# Run in current terminal (tracks latest session)
+# Run in current directory (tracks TODOs for this project)
 cc-todos
+
+# Track a specific directory
+cc-todos -C /path/to/project
 ```
 
 ### With tmux (recommended)
 
-```bash
-# Inside a tmux session, open TODO viewer in right pane
-cc-todos --tmux
-```
+The best way to use cc-todos is in a tmux pane alongside Claude Code.
 
-### One-liner to start Claude Code with TODO viewer
+#### Quick start
 
 ```bash
-tmux new -s claude \; \
-  split-window -h -p 20 'cc-todos' \; \
-  select-pane -t 0 \; \
-  send-keys 'claude' Enter
+# Start a new tmux session with Claude Code and TODO viewer
+tmux new -s dev -c ~/your/project \; \
+  send-keys 'claude' Enter \; \
+  split-window -h -p 20 \; \
+  send-keys 'cc-todos' Enter \; \
+  select-pane -t 0
 ```
+
+#### If cc-todos is not in PATH
+
+```bash
+# Using full path (adjust to your installation)
+tmux new -s dev -c ~/your/project \; \
+  send-keys 'claude' Enter \; \
+  split-window -h -p 20 \; \
+  send-keys '~/.cargo/bin/cc-todos' Enter \; \
+  select-pane -t 0
+```
+
+#### Multiple projects
+
+You can run multiple sessions for different projects:
+
+```bash
+# Terminal 1: Project A
+tmux new -s project-a -c ~/projects/project-a \; \
+  send-keys 'claude' Enter \; \
+  split-window -h -p 20 \; \
+  send-keys 'cc-todos' Enter \; \
+  select-pane -t 0
+
+# Terminal 2: Project B
+tmux new -s project-b -c ~/projects/project-b \; \
+  send-keys 'claude' Enter \; \
+  split-window -h -p 20 \; \
+  send-keys 'cc-todos' Enter \; \
+  select-pane -t 0
+```
+
+Each cc-todos instance will track the TODOs for its respective project.
+
+### Options
+
+| Option | Description |
+|--------|-------------|
+| `-C, --directory <PATH>` | Working directory to track (defaults to current directory) |
+| `--tmux` | Open TODO viewer in a new tmux pane |
 
 ## Keybindings
 
@@ -64,11 +105,16 @@ tmux new -s claude \; \
 ## Requirements
 
 - [Claude Code](https://claude.ai/claude-code) installed
+- Rust toolchain (for installation)
 - tmux (optional, for side-by-side view)
 
 ## How it works
 
-Claude Code stores TODO lists in `~/.claude/todos/` as JSON files. This tool watches that directory and displays the latest session's TODOs in real-time.
+Claude Code stores session information in `~/.claude/projects/` organized by working directory, and TODO lists in `~/.claude/todos/`. This tool:
+
+1. Maps your working directory to the corresponding Claude Code project
+2. Finds the latest session for that project
+3. Displays and watches the TODO file for real-time updates
 
 ## License
 
