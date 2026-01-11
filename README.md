@@ -21,7 +21,7 @@ cargo install cc-todos
 ### From source
 
 ```bash
-git clone https://github.com/twada/cc-todos
+git clone https://github.com/tomohiro-owada/cc-todos
 cd cc-todos
 cargo install --path .
 ```
