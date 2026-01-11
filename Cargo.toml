@@ -1,0 +1,22 @@
+[package]
+name = "cc-todos"
+version = "0.1.0"
+edition = "2024"
+authors = ["towada"]
+description = "A TUI viewer for Claude Code TODOs - real-time task tracking in your terminal"
+license = "MIT"
+repository = "https://github.com/twada/cc-todos"
+keywords = ["tui", "claude", "todo", "terminal", "ratatui"]
+categories = ["command-line-utilities", "development-tools"]
+readme = "README.md"
+
+[dependencies]
+ratatui = "0.29"
+crossterm = "0.28"
+notify = "7"
+tokio = { version = "1", features = ["full"] }
+clap = { version = "4", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+dirs = "5"
+anyhow = "1"
