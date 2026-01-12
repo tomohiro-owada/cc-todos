@@ -1,6 +1,6 @@
 [package]
 name = "cc-todos"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["towada"]
 description = "A TUI viewer for Claude Code TODOs - real-time task tracking in your terminal"
