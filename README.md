@@ -17,7 +17,7 @@ A terminal UI viewer for [Claude Code](https://claude.ai/claude-code) TODOs - re
 ### From crates.io
 
 ```bash
-cargo install cc-todos
+cargo install cc-todos --locked
 ```
 
 ### From source
